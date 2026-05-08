@@ -96,9 +96,15 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      window.location.href = '/login'
+      // Don't redirect for auth endpoints (login, register, logout)
+      const url = error.config?.url || ''
+      const isAuthEndpoint = /\/(auth\/(login|register|logout))/.test(url)
+      
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(error)
   }
