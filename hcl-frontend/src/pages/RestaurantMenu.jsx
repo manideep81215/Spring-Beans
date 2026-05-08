@@ -126,6 +126,9 @@ export default function RestaurantMenu() {
               </span>
               <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-gray-400" />{restaurant?.deliveryTime || '30-40'} min</span>
               <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-gray-400" />{restaurant?.address}</span>
+              <span className='flex items-center'> {"Dish  :"} </span>
+              <span className="flex items-center" >{ restaurant?.dish  }</span>
+              
             </div>
           </div>
         </div>

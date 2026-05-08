@@ -63,6 +63,7 @@ public class RestaurantService {
         restaurant.setCuisine(request.getCuisine());
         restaurant.setAddress(request.getAddress());
         restaurant.setRating(request.getRating());
+        restaurant.setDish(request.getDish());
         restaurant.setOpen(request.getOpen());
 
         return toRestaurantResponse(restaurantRepository.save(restaurant), true);
@@ -116,6 +117,7 @@ public class RestaurantService {
                 restaurant.getAddress(),
                 restaurant.getRating(),
                 restaurant.getOpen(),
+                restaurant.getDish(),
                 restaurant.getImageData(),
                 restaurant.getImageContentType(),
                 menuItems);

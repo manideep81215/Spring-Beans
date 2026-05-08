@@ -116,7 +116,7 @@ export default function Home() {
         rating: Number(newRestaurant.rating),
       })
       setRestaurants(items => [res.data, ...items])
-      setNewRestaurant({ name: '', cuisine: '', address: '', rating: '4.2', open: true })
+      setNewRestaurant({ name: '', cuisine: '', address: '', rating: '4.2',dish:'',open: true })
       toast.success('Restaurant added')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not add restaurant')
@@ -214,6 +214,13 @@ export default function Home() {
                 placeholder="Address"
                 value={newRestaurant.address}
                 onChange={e => setNewRestaurant(data => ({ ...data, address: e.target.value }))}
+                required
+              />
+              <input
+                className="input-field md:col-span-1"
+                placeholder="dish-type(veg/nonveg)"
+                value={newRestaurant.dish}
+                onChange={e => setNewRestaurant(data => ({ ...data, dish: e.target.value }))}
                 required
               />
               <input

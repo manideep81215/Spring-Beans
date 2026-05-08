@@ -35,4 +35,7 @@ public class RestaurantRequestDTO {
 
     @NotNull(message = "Open status is required")
     private Boolean open;
+
+       @NotBlank(message="dish type is mandatory")
+    private String  dish;
 }

@@ -4,6 +4,7 @@ import com.hackathon.hcl.DTO.CartItemRequestDTO;
 import com.hackathon.hcl.DTO.CartItemResponseDTO;
 import com.hackathon.hcl.DTO.CartResponseDTO;
 import com.hackathon.hcl.DTO.QuantityUpdateRequestDTO;
+import com.hackathon.hcl.exception.BadRequestException;
 import com.hackathon.hcl.exception.ResourceNotFoundException;
 import com.hackathon.hcl.model.Cart;
 import com.hackathon.hcl.model.CartItem;
@@ -23,6 +24,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CartService {
+
+    private static final int MAX_PRODUCT_QUANTITY = 10;
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
@@ -54,7 +57,9 @@ public class CartService {
                     return item;
                 });
 
-        cartItem.setQuantity(cartItem.getQuantity() + request.getQuantity());
+        int updatedQuantity = cartItem.getQuantity() + request.getQuantity();
+        validateProductQuantity(updatedQuantity);
+        cartItem.setQuantity(updatedQuantity);
         cartItem.setPrice(menuItem.getPrice());
         recalculateTotal(cart);
         return toCartResponse(cartRepository.save(cart));
@@ -67,6 +72,7 @@ public class CartService {
             QuantityUpdateRequestDTO request) {
         Cart cart = getOwnedCart(authorizationHeader);
         CartItem cartItem = findOwnedCartItem(cart, itemId);
+        validateProductQuantity(request.getQuantity());
         cartItem.setQuantity(request.getQuantity());
         cartItem.setPrice(cartItem.getMenuItem().getPrice());
         recalculateTotal(cart);
@@ -125,6 +131,12 @@ public class CartService {
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         cart.setTotalAmount(total);
+    }
+
+    private void validateProductQuantity(Integer quantity) {
+        if (quantity > MAX_PRODUCT_QUANTITY) {
+            throw new BadRequestException("A product can be added up to 10 only");
+        }
     }
 
     private CartResponseDTO toCartResponse(Cart cart) {

@@ -1,5 +1,8 @@
 package com.hackathon.hcl.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,9 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "restaurants")
@@ -58,6 +58,12 @@ public class Restaurant {
     @NotNull(message = "Open status is required")
     @Column(nullable = false)
     private Boolean open;
+    
+
+    @NotNull(message="dish type is mandatory")
+    @Column(nullable=false)
+    private String  dish;
+    
 
     @Column(name = "image_data", columnDefinition = "LONGBLOB")
     private byte[] imageData;

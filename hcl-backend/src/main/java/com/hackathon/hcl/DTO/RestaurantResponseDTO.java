@@ -18,7 +18,9 @@ public class RestaurantResponseDTO {
     private String cuisine;
     private String address;
     private Double rating;
+    
     private Boolean open;
+    private String dish;
     private byte[] imageData;
     private String imageContentType;
     private List<MenuItemResponseDTO> menuItems;
