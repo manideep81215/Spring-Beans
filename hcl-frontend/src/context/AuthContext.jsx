@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
       toast.success(`Welcome back, ${userData.name}!`)
       return { success: true, user: userData }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Login failed'
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Login failed'
       toast.error(msg)
       return { success: false, message: msg }
     }
@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
       toast.success('Account created! Welcome')
       return { success: true, user: userData }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed'
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Registration failed'
       toast.error(msg)
       return { success: false, message: msg }
     }
