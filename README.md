@@ -28,9 +28,9 @@ A modern, full-stack food ordering application built with **React** and **Spring
 **FoodRush** is a comprehensive food delivery platform that bridges the gap between customers and restaurants. It provides an intuitive interface for customers to discover restaurants, browse menus, manage shopping carts, place orders, and track deliveries in real-time. Additionally, it includes a robust admin panel for restaurant and menu management.
 
 ### Key Highlights:
-- **User Roles**: CUSTOMER, RESTAURANT, ADMIN
+- **User Roles**: CUSTOMER , ADMIN
 - **Real-time Order Tracking**: Live status updates from placement to delivery
-- **Role-Based Access**: Different features for customers, restaurants, and administrators
+- **Role-Based Access**: Different features for customers  and administrators
 - **Scalable Architecture**: Microservice-ready design with stateless API
 - **Image Management**: Binary storage for restaurant and menu item images
 - **Email Notifications**: Automated transactional emails for user actions
