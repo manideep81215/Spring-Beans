@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api'
+const API_BASE_URL = rawApiBaseUrl.replace(/\/+$/, '').endsWith('/api')
+  ? rawApiBaseUrl.replace(/\/+$/, '')
+  : `${rawApiBaseUrl.replace(/\/+$/, '')}/api`
 
 const toNumber = (value) => {
   if (value === null || value === undefined) return value
@@ -85,8 +88,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
+    const url = config.url || ''
+    const isAuthEndpoint = /\/auth\/(login|register)$/.test(url)
     const token = localStorage.getItem('token')
-    if (token) config.headers.Authorization = `Bearer ${token}`
+    if (token && !isAuthEndpoint) config.headers.Authorization = `Bearer ${token}`
     return config
   },
   (error) => Promise.reject(error)
