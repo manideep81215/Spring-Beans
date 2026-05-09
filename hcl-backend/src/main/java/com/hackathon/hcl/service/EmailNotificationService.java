@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class EmailNotificationService {
     @Value("${app.mail.from:no-reply@foodrush.local}")
     private String fromAddress;
 
+    @Async
     public void sendRegistrationConfirmation(User user) {
         send(
                 user.getEmail(),
