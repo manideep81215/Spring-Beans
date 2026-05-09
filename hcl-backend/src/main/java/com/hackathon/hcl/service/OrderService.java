@@ -12,6 +12,7 @@ import com.hackathon.hcl.model.Order;
 import com.hackathon.hcl.model.OrderItem;
 import com.hackathon.hcl.model.User;
 import com.hackathon.hcl.repository.CartRepository;
+import com.hackathon.hcl.repository.CartItemRepository;
 import com.hackathon.hcl.repository.OrderRepository;
 import com.hackathon.hcl.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final EmailNotificationService emailNotificationService;
@@ -43,7 +45,8 @@ public class OrderService {
         User user = getUserFromToken(authorizationHeader);
         Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
-        if (cart.getCartItems().isEmpty()) {
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
+        if (cartItems.isEmpty()) {
             throw new BadRequestException("Cannot place order from an empty cart");
         }
 
@@ -53,7 +56,7 @@ public class OrderService {
         order.setTotalAmount(cart.getTotalAmount());
         order.setAddress(request.getAddress());
 
-        for (CartItem cartItem : cart.getCartItems()) {
+        for (CartItem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setMenuItem(cartItem.getMenuItem());
@@ -63,9 +66,8 @@ public class OrderService {
         }
 
         Order savedOrder = orderRepository.save(order);
-        cart.getCartItems().clear();
+        cartItemRepository.deleteAll(cartItems);
         cart.setTotalAmount(java.math.BigDecimal.ZERO);
-        cartRepository.save(cart);
         emailNotificationService.sendOrderConfirmation(savedOrder);
         return toOrderResponse(savedOrder);
     }

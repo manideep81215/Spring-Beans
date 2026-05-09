@@ -151,6 +151,7 @@ export const cartAPI = {
 export const orderAPI = {
   placeOrder: (data) => api.post('/orders/place', {
     address: data.address || data.deliveryAddress,
+    deliveryAddress: data.deliveryAddress || data.address,
   }).then(withData(normalizeOrder)),
   getHistory: () => api.get('/orders/history').then(withData(normalizeOrder)),
   getById: (id) => api.get(`/orders/${id}`).then(withData(normalizeOrder)),

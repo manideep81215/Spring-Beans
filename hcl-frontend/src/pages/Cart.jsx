@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 
 export default function Cart() {
   const navigate = useNavigate()
-  const { cart, updateQuantity, removeFromCart, clearCart } = useCart()
+  const { cart, updateQuantity, removeFromCart, clearCart, fetchCart } = useCart()
   const [address, setAddress] = useState('')
   const [placing, setPlacing] = useState(false)
   const [addrErr, setAddrErr] = useState('')
@@ -50,6 +50,7 @@ export default function Cart() {
       toast.success('Order placed successfully!')
       navigate(`/order/${res.data.id}`)
     } catch (err) {
+      await fetchCart()
       toast.error(err.response?.data?.message || 'Failed to place order')
     } finally {
       setPlacing(false)
