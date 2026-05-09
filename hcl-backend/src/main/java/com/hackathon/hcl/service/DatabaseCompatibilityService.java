@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -68,6 +69,7 @@ public class DatabaseCompatibilityService implements ApplicationRunner {
                 """, Integer.class);
 
         if (validForeignKeys == null || validForeignKeys == 0) {
+            alignOrderItemsOrderIdColumn();
             try {
                 jdbcTemplate.execute("""
                         ALTER TABLE order_items
@@ -79,6 +81,35 @@ public class DatabaseCompatibilityService implements ApplicationRunner {
                 log.warn("Could not add order_items.order_id foreign key to orders(id): {}", ex.getMessage());
             }
         }
+    }
+
+    private void alignOrderItemsOrderIdColumn() {
+        Optional<String> ordersIdType = getColumnType("orders", "id");
+        Optional<String> orderItemsOrderIdType = getColumnType("order_items", "order_id");
+
+        if (ordersIdType.isEmpty() || orderItemsOrderIdType.isEmpty()) {
+            return;
+        }
+
+        String requiredColumnDefinition = ordersIdType.get() + " NOT NULL";
+        if (!ordersIdType.get().equalsIgnoreCase(orderItemsOrderIdType.get())) {
+            jdbcTemplate.execute("ALTER TABLE order_items MODIFY order_id " + requiredColumnDefinition);
+            log.info(
+                    "Aligned order_items.order_id column type from {} to {}",
+                    orderItemsOrderIdType.get(),
+                    requiredColumnDefinition);
+        }
+    }
+
+    private Optional<String> getColumnType(String tableName, String columnName) {
+        List<String> columnTypes = jdbcTemplate.queryForList("""
+                SELECT COLUMN_TYPE
+                FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = ?
+                  AND COLUMN_NAME = ?
+                """, String.class, tableName, columnName);
+        return columnTypes.stream().findFirst();
     }
 
     private boolean tableExists(String tableName) {
